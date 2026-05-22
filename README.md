@@ -52,7 +52,7 @@ An Emacs interface for [Antigravity CLI](https://blog.google/technology/develope
 (use-package popup :ensure t)
 ;; install antigravity-cli.el
 (use-package antigravity-cli :ensure t
-  :vc (:url "https://github.com/linchen2chris/antigravity-cli.el" :rev :newest)
+  :vc (:url "https://github.com/caiocaldeira3/antigravity-cli.el" :rev :newest)
   :config (antigravity-cli-mode)
   :bind-keymap ("C-c c" . antigravity-cli-command-map)) ;; or your preferred key
 ```
@@ -77,7 +77,7 @@ An Emacs interface for [Antigravity CLI](https://blog.google/technology/develope
 ;; for slash commands popup
 (use-package popup :ensure t)
 (use-package antigravity-cli
-  :straight (:type git :host github :repo "linchen2chris/antigravity-cli.el" :branch "main"
+  :straight (:type git :host github :repo "caiocaldeira3/antigravity-cli.el" :branch "main"
                    :files ("*.el" (:exclude "demo.gif")))
   :bind-keymap
   ("C-c c" . antigravity-cli-command-map)
@@ -93,7 +93,7 @@ To install in Doom Emacs, configure your packages and configuration as follows:
    ```elisp
    (package! antigravity-cli
      :recipe (:host github
-              :repo "linchen2chris/antigravity-cli.el"
+              :repo "caiocaldeira3/antigravity-cli.el"
               :branch "main"
               :files ("*.el" (:exclude "demo.gif"))))
    ```
