@@ -480,8 +480,8 @@ Choose between \\='eat (default) and \\='vterm terminal emulators."
 Optional SWITCHES are command-line arguments to PROGRAM.
 Returns the buffer containing the terminal.")
 
-(cl-defgeneric antigravity-cli--term-send-string (backend terminal string)
-  "Send STRING to TERMINAL using BACKEND.")
+(cl-defgeneric antigravity-cli--term-send-string (backend string)
+  "Send STRING to terminal using BACKEND.")
 
 (cl-defgeneric antigravity-cli--term-kill-process (backend buffer)
   "Kill the terminal process in BUFFER using BACKEND.")
@@ -720,6 +720,8 @@ _BACKEND is the terminal backend type (should be \\='eat)."
 (declare-function vterm-mode "vterm")
 (declare-function vterm-send-key "vterm" key &optional shift meta ctrl accept-proc-output)
 (declare-function vterm-send-string "vterm" (string &optional paste-p))
+(declare-function vterm--filter "vterm" (process input))
+(declare-function vterm-send-return "vterm")
 
 ;; Helper to ensure vterm is loaded
 (cl-defmethod antigravity-cli--term-make ((_backend (eql vterm)) buffer-name program &optional switches)
@@ -760,9 +762,18 @@ SWITCHES are optional command-line arguments for PROGRAM."
   "Send STRING to vterm terminal.
 
 _BACKEND is the terminal backend type (should be \\='vterm).
-_TERMINAL is unused for vterm backend.
 STRING is the text to send to the terminal."
-  (vterm-send-string string))
+  (cond
+   ((or (equal string "\r")
+        (equal string "\n")
+        (equal string "\r\n")
+        (equal string (kbd "RET")))
+    (vterm-send-return))
+   ((or (equal string "\e")
+        (equal string (kbd "ESC")))
+    (vterm-send-key "escape"))
+   (t
+    (vterm-send-string string))))
 
 (cl-defmethod antigravity-cli--term-kill-process ((_backend (eql vterm)) buffer)
   "Kill the vterm terminal process in BUFFER.
@@ -836,28 +847,24 @@ _BACKEND is the terminal backend type (should be \\='vterm)."
   (vterm-send-key "escape"))
 
 (defun antigravity-cli--vterm-send-return ()
-  "Send escape key to vterm."
+  "Send return key to vterm."
   (interactive)
-  (vterm-send-key "
-"))
+  (vterm-send-return))
 
 (defun antigravity-cli--vterm-send-alt-return ()
   "Send <alt>-<return> to vterm."
   (interactive)
-  (vterm-send-key "
-" nil t))
+  (vterm-send-key "return" nil t))
 
 (defun antigravity-cli--vterm-send-shift-return ()
   "Send shift return to vterm."
   (interactive)
-  (vterm-send-key "
-" t))
+  (vterm-send-key "return" t))
 
 (defun antigravity-cli--vterm-send-super-return ()
-  "Send escape key to vterm."
+  "Send super return key to vterm."
   (interactive)
-  ;; (vterm-send-key " " t)
-  (vterm-send-key (kbd "s-<return>") t))
+  (vterm-send-key "return" nil nil nil t))
 
 ;; (defun antigravity-cli--vterm-send-alt-return ()
 ;;   "Send alt-return to vterm for newline without submitting."
@@ -1458,6 +1465,12 @@ INPUT is the terminal output string."
 
   (funcall orig-fun process input))
 
+(defvar antigravity-cli--vterm-orig-filter nil
+  "Stores the original vterm--filter function.")
+
+(defvar antigravity-cli--vterm-in-flush nil
+  "Non-nil if we are currently flushing the multiline buffer.")
+
 (defvar-local antigravity-cli--vterm-multiline-buffer nil
   "Buffer for accumulating multi-line vterm output.")
 
@@ -1470,8 +1483,10 @@ indicate cursor positioning and line clearing operations.
 ORIG-FUN is the original vterm--filter function.
 PROCESS is the vterm process.
 INPUT is the terminal output string."
-  (if (not antigravity-cli-vterm-buffer-multiline-output)
-      ;; Feature disabled, pass through normally
+  (setq antigravity-cli--vterm-orig-filter orig-fun)
+  (if (or (not antigravity-cli-vterm-buffer-multiline-output)
+          antigravity-cli--vterm-in-flush)
+      ;; Feature disabled or flushing, pass through normally
       (funcall orig-fun process input)
     (with-current-buffer (process-buffer process)
       ;; Only buffer if we see strong indicators of multiline redraw
@@ -1520,14 +1535,15 @@ INPUT is the terminal output string."
     (with-current-buffer buffer
       (when antigravity-cli--vterm-multiline-buffer
         (let ((inhibit-redisplay t)
+              (antigravity-cli--vterm-in-flush t)
               (data antigravity-cli--vterm-multiline-buffer))
           ;; Clear buffer state
           (setq antigravity-cli--vterm-multiline-buffer nil
                 antigravity-cli--vterm-multiline-buffer-timer nil)
           ;; Process all buffered data at once with redisplay inhibited
-          (funcall (symbol-function 'vterm--filter)
-                   (get-buffer-process buffer)
-                   data))))))
+          (let ((proc (get-buffer-process buffer)))
+            (when proc
+              (vterm--filter proc data))))))))
 
 (defun antigravity-cli--vterm-output-recent-p ()
   "Check if vterm output was received recently.
