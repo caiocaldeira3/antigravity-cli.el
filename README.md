@@ -91,11 +91,7 @@ To install in Doom Emacs, configure your packages and configuration as follows:
 
 1. Add the package recipe to your `packages.el` (typically in `~/.config/doom/packages.el`):
    ```elisp
-   (package! antigravity-cli
-     :recipe (:host github
-              :repo "caiocaldeira3/antigravity-cli.el"
-              :branch "main"
-              :files ("*.el")))
+   (package! antigravity-cli :recipe (:host github :repo "caiocaldeira3/antigravity-cli.el"))
    ```
 
 2. Add the configuration to your `config.el` (typically in `~/.config/doom/config.el`):
