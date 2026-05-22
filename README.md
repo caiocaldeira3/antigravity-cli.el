@@ -85,6 +85,34 @@ An Emacs interface for [Antigravity CLI](https://blog.google/technology/develope
   (antigravity-cli-mode))
 ```
 
+### Doom Emacs
+
+To install in Doom Emacs, configure your packages and configuration as follows:
+
+1. Add the package recipe to your `packages.el` (typically in `~/.config/doom/packages.el`):
+   ```elisp
+   (package! antigravity-cli
+     :recipe (:host github
+              :repo "linchen2chris/antigravity-cli.el"
+              :branch "main"
+              :files ("*.el" (:exclude "demo.gif"))))
+   ```
+
+2. Add the configuration to your `config.el` (typically in `~/.config/doom/config.el`):
+   ```elisp
+   (use-package! antigravity-cli
+     :config
+     ;; Set your preferred terminal backend (vterm or eat)
+     (setq antigravity-cli-terminal-backend 'vterm)
+     
+     ;; Centralized Doom bindings under the leader key (usually SPC)
+     (map! :leader
+           (:prefix-map ("l" . "LLMs CLI Agents")
+            :desc "Antigravity CLI Menu" "a" #'antigravity-cli-transient)))
+   ```
+
+3. Run `doom sync` in your terminal to download, build, and synchronize the package.
+
 ## Basic Usage
 
 ### Setting Prefix Key
@@ -146,8 +174,8 @@ To enter read-only mode in the Antigravity buffer use `antigravity-cli-toggle-re
 
 Sometimes you want to send a quick response to Antigravity without switching to the Antigravity buffer. The following commands let you answer a query from Antigravity without leaving your current editing buffer:
 
-- `antigravity-cli-send-return` (`C-c c y`) - send the return or enter key to Antigravity, commonly used to respond with "Yes" to Antigravity queriesy
-- `antigravity-cli-send-escape` (`C-c c n`) - send the escape key, to say "No" to Antigravity or to cancel a running Antigravity action
+- `antigravity-cli-send-return` (`C-c c y`) - send the return or enter key to Antigravity, commonly used to respond with "Yes" to Antigravity queries
+- `antigravity-cli-esc` (`C-c c E` or `C-c c ESC`) - send the escape key to say "No" to Antigravity, navigate menus, or cancel a running Antigravity action (alias: `antigravity-cli-send-escape`)
 - `antigravity-cli-send-1` (`C-c c 1`) - send "1" to Antigravity, to choose option "1" in response to a Antigravity query
 - `antigravity-cli-send-2` (`C-c c 2`) - send "2" to Antigravity
 - `antigravity-cli-send-3` (`C-c c 3`) - send "3" to Antigravity
@@ -224,8 +252,8 @@ You can change this behavior by customizing `antigravity-cli-newline-keybinding-
 - `antigravity-cli-toggle-read-only-mode` (`C-c c z`) - Toggle between read-only mode and normal mode in Antigravity buffer (useful for selecting and copying text)
 - `antigravity-cli-cycle-mode` (`C-c c M`) - Send Shift-Tab to Antigravity to cycle between default mode, auto-accept edits mode, and plan mode
 
-- `antigravity-cli-send-return` (`C-c c y`) - Send return key to Antigravity (useful for confirming with Antigravity without switching to the Antigravity REPL buffer) (useful for responding with "Yes"  to Antigravity)
-- `antigravity-cli-send-escape` (`C-c c n`) - Send escape key to Antigravity (useful for saying "No" when Antigravity asks for confirmation without switching to the Antigravity REPL buffer)
+- `antigravity-cli-send-return` (`C-c c y`) - Send return key to Antigravity (useful for confirming with Antigravity without switching to the Antigravity REPL buffer) (useful for responding with "Yes" to Antigravity)
+- `antigravity-cli-esc` (`C-c c E` or `C-c c ESC`) - Send escape key to Antigravity (useful for saying "No" when Antigravity asks for confirmation or to cancel a running action without switching to the Antigravity REPL buffer) (alias: `antigravity-cli-send-escape`)
 - `antigravity-cli-send-1` (`C-c c 1`) - Send "1" to Antigravity (useful for selecting the first option when Antigravity presents a numbered menu)
 - `antigravity-cli-send-2` (`C-c c 2`) - Send "2" to Antigravity (useful for selecting the second option when Antigravity presents a numbered menu)
 - `antigravity-cli-send-3` (`C-c c 3`) - Send "3" to Antigravity (useful for selecting the third option when Antigravity presents a numbered menu)
