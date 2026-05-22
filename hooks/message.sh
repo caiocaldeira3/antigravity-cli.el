@@ -3,7 +3,7 @@
 input=$(cat)
 session_id=$(echo "$input" | jq -r '.session_id // ""')
 
-transcript=$(find "$HOME/.claude/projects" -name "${session_id}.jsonl" 2>/dev/null | head -1)
+transcript=$(find "$HOME/.antigravity/projects" -name "${session_id}.jsonl" 2>/dev/null | head -1)
 [ -z "$transcript" ] && exit 0
 
 last_assistant=$(grep '"role":"assistant"' "$transcript" 2>/dev/null | tail -1)

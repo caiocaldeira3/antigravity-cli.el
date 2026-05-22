@@ -14,3 +14,7 @@
 
 # Experimental sockets/MCP directory
 sockets-mcp/
+
+# Instruction/migration logs (local only)
+MIGRATION_SUMMARY.md
+INSTRUCTIONS_PROMPT.md
