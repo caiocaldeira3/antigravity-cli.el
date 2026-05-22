@@ -4,7 +4,7 @@
 
 An Emacs interface for [Antigravity CLI](https://blog.google/technology/developers/introducing-antigravity-cli-open-source-ai-agent/), providing integration between Emacs and Antigravity AI for coding assistance.
 
-> **Note**: This package was formerly known as `gemini-cli.el`. It has been migrated to support the new Antigravity CLI following the deprecation of the Gemini CLI.
+> **Note**: This repository is forked from the `gemini-cli.el` repository to support the `antigravity-cli` following the news of the deprecation of the `gemini-cli` tool.
 
 ## Features
 
