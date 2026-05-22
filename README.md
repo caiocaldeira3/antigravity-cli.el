@@ -241,6 +241,7 @@ You can change this behavior by customizing `antigravity-cli-newline-keybinding-
 - `antigravity-cli-send-buffer-file` (`C-c c o`) - Send the file associated with current buffer to Antigravity. With prefix arg (`C-u`), prompts for instructions to add to the file. With double prefix (`C-u C-u`), adds instructions and switches to Antigravity buffer
 - `antigravity-cli-fix-error-at-point` (`C-c c e`) - Ask Antigravity to fix the error at the current point (works with flycheck, flymake, and any system that implements help-at-pt). With prefix arg (`C-u`), switches to the Antigravity buffer after sending
 - `antigravity-cli-fork` (`C-c c f`) - Fork conversation (jump to previous conversation by sending escape-escape to Antigravity)
+- `antigravity-cli-esc` (`C-c c E` or `C-c c ESC`) - Send an Escape key/character to the active Antigravity CLI REPL buffer (alias: `antigravity-cli-send-escape`)
 - `antigravity-cli-slash-commands` (`C-c c /`) - Access Antigravity slash commands menu
 - `antigravity-cli-toggle` (`C-c c t`) - Toggle Antigravity window
 - `antigravity-cli-switch-to-buffer` (`C-c c b`) - Switch to the Antigravity buffer. With prefix arg (`C-u`), shows all Antigravity instances across all directories
